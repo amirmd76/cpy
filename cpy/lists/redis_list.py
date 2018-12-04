@@ -1,6 +1,8 @@
 import json
 import uuid
 
+from cpy.lists.iteration import ListIterator
+
 
 class RedisList(object):
     redis_client = None
@@ -52,25 +54,7 @@ class RedisList(object):
         return item
 
     def __iter__(self):
-        return RedisListIterator(self.redis_client, self.list_key)
+        return ListIterator(self)
 
     def __len__(self):
         return self.redis_client.llen(self.list_key)
-
-
-class RedisListIterator(object):
-    key = None
-    idx = 0
-    redis_client = None
-
-    def __init__(self, redis_client, key):
-        self.redis_client = redis_client
-        self.key = key
-
-    def __next__(self):
-        try:
-            res = json.loads(self.redis_client.lindex(self.key, self.idx))
-            self.idx += 1
-            return res
-        except:
-            raise StopIteration()

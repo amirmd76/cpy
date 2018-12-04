@@ -1,3 +1,6 @@
+from cpy.lists.iteration import ListIterator
+
+
 class DictList(object):
     objects = {}
     head = 0
@@ -53,24 +56,7 @@ class DictList(object):
         return self.get(idx, raise_exception=True)
 
     def __iter__(self):
-        return DictListIterator(self)
+        return ListIterator(self)
     
     def __len__(self):
         return self.tail - self.head
-    
-
-class DictListIterator(object):
-    dict_list = None
-    idx = 0
-    
-    def __init__(self, dict_list: DictList):
-        self.dict_list = dict_list
-    
-    def __next__(self):
-        try:
-            item = self.dict_list[self.idx]
-            self.idx += 1
-            return item
-        except IndexError:
-            raise StopIteration()
-
