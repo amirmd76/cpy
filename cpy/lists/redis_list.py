@@ -49,6 +49,7 @@ class RedisList(object):
         item = self.get(idx)
         if item is None:
             raise IndexError("No such index")
+        return item
 
     def __iter__(self):
         return RedisListIterator(self.redis_client, self.list_key)
