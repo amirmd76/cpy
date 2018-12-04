@@ -8,6 +8,8 @@ class RedisList(object):
     redis_client = None
     key = ""
     list_key = ""
+    key_key = ""
+    commitable = False
 
     @staticmethod
     def get_list_key(key):
@@ -17,20 +19,24 @@ class RedisList(object):
     def get_key_key(key):
         return "cpy:redis_list:key:{}".format(key)
 
-    def __init__(self, redis_client, key=None, overwrite=False):
+    def __init__(self, redis_client, key=None, overwrite=False, commit=True):
         self.redis_client = redis_client
         if not key:
             self.key = str(uuid.uuid4())
         else:
             self.key = key
         key_key = self.get_key_key(self.key)
+        self.key_key = key_key
         try:
             original_key = self.redis_client.get(key_key)
         except:
             original_key = None
         if overwrite or not original_key:
             self.list_key = self.get_list_key(str(uuid.uuid4()))
-            self.redis_client.set(key_key, self.list_key)
+            if commit:
+                self.redis_client.set(key_key, self.list_key)
+            else:
+                self.commitable = True
         else:
             self.list_key = original_key
 
@@ -40,6 +46,10 @@ class RedisList(object):
         except:
             raise ValueError("item is not serializable")
         self.redis_client.rpush(self.list_key, serialized)
+
+    def commit(self):
+        if self.commitable:
+            self.redis_client.set(self.key_key, self.list_key)
 
     def get(self, idx):
         try:
