@@ -4,7 +4,7 @@ readme = "Charzeh Python (CPy)"
 
 setup(
     name='cpy',
-    version='1.0.4',
+    version='1.0.5',
     description='Charzeh Python Helpers',
     long_description=readme,
     author='Amir Dehghan',

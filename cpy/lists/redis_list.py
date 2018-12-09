@@ -53,7 +53,10 @@ class RedisList(object):
 
     def get(self, idx):
         try:
-            return json.loads(self.redis_client.lindex(self.list_key, idx))
+            res = self.redis_client.lindex(self.list_key, idx)
+            if isinstance(res, bytes):
+                res = res.decode()
+            return json.loads(res)
         except:
             return None
 
